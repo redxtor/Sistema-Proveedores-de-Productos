@@ -20,10 +20,40 @@
                         </p>
                     </header>
 
+                    <form>
+                        <div class="flex flex-row mt-0 mb-4 mt-6 space-y-6 max-w-7xl">
+                            <div class="flex-auto" style="width: 600px">
+                                <x-input-label for="search" :value="__('Buscar Proveedor por RFC')" />
+                                <x-text-input id="search" name="search" type="text" class="mt-1 block w-full" :value="old('search', $search)" required autofocus autocomplete="search" />
+                                <x-input-error class="mt-2" :messages="$errors->get('search')" />
+                            </div>
+                            <div class="mt-1" style="margin-left: 20px;">
+                                <x-primary-button style="height: 42px">{{ __('Buscar') }}</x-primary-button>
+                            </div>
+                            @if($existProv)
+                                <div class="mt-2" style="margin-left: 33px; margin-top: 32px">
+                                    Proveedor Encontrado: {{ $proveedores[0]->nombre }}
+                                </div>
+                            @else
+                                <div class="mt-2" style="margin-left: 33px; margin-top: 32px">
+                                    Proveedor No Encontrado
+                                </div>
+                            @endif
+                        </div>
+                    </form>
+
                     <form method="POST" action="{{ route('productos.update', $producto) }}" class="mt-6 space-y-6 max-w-7xl">
                         @csrf
                         @method('POST')
 
+                        @if($existProv)
+                            <input type="hidden" name="id_proveedor" value="{{ $proveedores[0]->id }}">
+                        @else
+                            <div class="mt-2">
+                                <b> Debe buscar al proveedor por su RFC para agregar un producto. </b>
+                            </div>
+                        @endif
+                        
                         <input type="hidden" name="id" value="{{ $product[0]->id }}">
 
                         <div>
@@ -78,9 +108,10 @@
                             </div>
                         </div>
                        
+                        
                         <div>
                             <x-input-label for="id_proveedor" :value="__('Nombre del Proveedor')" />
-                            <x-text-input id="id_proveedor" name="id_proveedor" type="text" class="mt-1 block w-full" :value="old('id_proveedor', ($editing ? $product[0]->id_proveedor : ''))" required autofocus autocomplete="name" />
+                            <x-text-input id="id_proveedor" name="id_proveedor" type="text" class="mt-1 block w-full" :value="old('id_proveedor', ($editing ? $prov[0]->nombre: ''))" required autofocus autocomplete="name" disabled/>
                             <x-input-error class="mt-2" :messages="$errors->get('id_proveedor')" />
                         </div>
 

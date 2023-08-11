@@ -32,12 +32,20 @@ class ProductoController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        $regions = Region::pluck('region', 'id');
-        $proveedors = Proveedor::pluck('nombre', 'id');
+        $search = $request->get('search', '');
+        //dd($search);
+        $proveedores = DB::table('proveedors')
+            ->where('RFC', $search)
+            ->get();
 
-        return view('app.productos.create', compact('regions', 'proveedors'));
+        $existProv = 0;
+        if(count($proveedores) > 0) {
+            $existProv = 1;
+        }
+
+        return view('app.productos.create', compact('proveedores', 'search', 'existProv'));
     }
 
     /**
@@ -66,10 +74,22 @@ class ProductoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id, Producto $producto)
-    {
+    public function edit($id, Producto $producto, Request $request)
+    {   
+        $search = $request->get('search', '');
+        //dd($search);
+        $proveedores = DB::table('proveedors')
+            ->where('RFC', $search)
+            ->get();        
+        $existProv = 0;
+        if(count($proveedores) > 0) {
+            $existProv = 1;
+        }
+
         $product = DB::select('select * from productos where id = ?', [$id]);
-        return view('app.productos.edit', compact('product', 'producto'));
+        $prov = DB::select('select * from proveedors where id = ?', [$product[0]->id_proveedor]);
+
+        return view('app.productos.edit', compact('product', 'producto', 'proveedores', 'search', 'existProv', 'prov'));
     }
 
     /**

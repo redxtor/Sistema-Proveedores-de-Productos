@@ -15,18 +15,48 @@
                         </h2>
 
                         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                            {{ __("Para agregar un producto al sistema, solo complete todos los campos que se indican a continuación.") }}
+                            {{ __("Para agregar un producto al sistema, primero busque al proveedor por RFC del producto. Utilice el campo de búsqueda para encontrar a su proveedor. Si este es encontrado, podrá completar todos los campos que se indican a continuación.") }}
                         </p>
                     </header>
 
+                    <form>
+                        <div class="flex flex-row mt-0 mb-4 mt-6 space-y-6 max-w-7xl">
+                            <div class="flex-auto" style="width: 600px">
+                                <x-input-label for="search" :value="__('Buscar Proveedor por RFC')" />
+                                <x-text-input id="search" name="search" type="text" class="mt-1 block w-full" :value="old('search', $search)" required autofocus autocomplete="search" />
+                                <x-input-error class="mt-2" :messages="$errors->get('search')" />
+                            </div>
+                            <div class="mt-1" style="margin-left: 20px;">
+                                <x-primary-button style="height: 42px">{{ __('Buscar') }}</x-primary-button>
+                            </div>
+                            @if($existProv)
+                                <div class="mt-2" style="margin-left: 33px; margin-top: 32px">
+                                    Proveedor Encontrado: {{ $proveedores[0]->nombre }}
+                                </div>
+                            @else
+                                <div class="mt-2" style="margin-left: 33px; margin-top: 32px">
+                                    Proveedor No Encontrado
+                                </div>
+                            @endif
+                        </div>
+                    </form>
+
                     <form method="post" action="{{ route('productos.store') }}" class="mt-6 space-y-6 max-w-7xl">
                         @csrf
+                        
+                        @if($existProv)
+                            <input type="hidden" name="id_proveedor" value="{{ $proveedores[0]->id }}">
+                        @else
+                            <div class="mt-2">
+                                <b> Debe buscar al proveedor por su RFC para agregar un producto. </b>
+                            </div>
+                        @endif
 
                         <div>
                             <x-input-label for="nombre" :value="__('Nombre del Producto')" />
                             <x-text-input id="nombre" name="nombre" type="text" class="mt-1 block w-full" :value="old('nombre', '')" required autofocus autocomplete="name" />
                             <x-input-error class="mt-2" :messages="$errors->get('nombre')" />
-                        </div>
+                        </div>  
 
                         <div class="flex gap-4">
                             <div class="w-50" style="min-width: 33.1%;">
@@ -72,65 +102,6 @@
                                 <x-text-input id="fecha_ingreso" name="fecha_ingreso" type="date" class="mt-1 block w-full" :value="old('fecha_ingreso', '')" required autofocus autocomplete="name" />
                                 <x-input-error class="mt-2" :messages="$errors->get('fecha_ingreso')" />
                             </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="selectRegion" class="block text-sm font-medium text-gray-700">Selecciona una Región:</label>
-                            <select id="selectRegion" name="selected_region" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="">Seleccione una región</option>
-                                @foreach ($regions as $region)
-                                    <option value="{{ $region }}">{{ $region }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- <div>
-                            <x-inputs.group class="col-sm-12 col-lg-6">
-                                <x-input-label for="selectRegion" :value="__('Region')" />
-                                <x-inputs.select name="selected_region" label="" required id="selectRegion"> 
-                                    @php $selected = old('regionID', '') @endphp
-                                    <option disabled {{ empty($selected) ? 'selected' : '' }}>Favor de seleccionar una Región</option>
-                                    @foreach($regions as $value => $label)
-                                        <option value="{{ $value }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label }}</option>
-                                    @endforeach
-                                </x-inputs.select>
-                            </x-inputs.group>
-                        </div> -->
-
-                        <div class="mb-4">
-                            <label for="selectProveedor" class="block text-sm font-medium text-gray-700">Selecciona un Proveedor:</label>
-                            <select id="selectProveedor" name="selected_proveedor" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" disabled>
-                                <option value="">Primero selecciona una región</option>
-                            </select>
-                        </div>
-
-                        <script>
-                            const selectRegion = document.getElementById('selectRegion');
-                            const selectProveedor = document.getElementById('selectProveedor');
-
-                            selectRegion.addEventListener('change', () => {
-                                const selectedRegionId = selectRegion.value;
-                                if (selectedRegionId) {
-                                    selectProveedor.disabled = false;
-                                    selectProveedor.innerHTML = '<option value="">Seleccione un proveedor</option>';
-                                    const proveedoresForRegion = @json($proveedors);
-                                    proveedoresForRegion[selectedRegionId].forEach(proveedor => {
-                                        const option = document.createElement('option');
-                                        option.value = proveedor.id;
-                                        option.textContent = proveedor.nombre;
-                                        selectProveedor.appendChild(option);
-                                    });
-                                } else {
-                                    selectProveedor.disabled = true;
-                                    selectProveedor.innerHTML = '<option value="">Primero selecciona una región</option>';
-                                }
-                            });
-                        </script>
-
-                        <div>
-                            <x-input-label for="id_proveedor" :value="__('Nombre del Proveedor')" />
-                            <x-text-input id="id_proveedor" name="id_proveedor" type="text" class="mt-1 block w-full" :value="old('id_proveedor', '')" required autofocus autocomplete="name" />
-                            <x-input-error class="mt-2" :messages="$errors->get('id_proveedor')" />
                         </div>
 
                         <div class="flex justify-end gap-4">
