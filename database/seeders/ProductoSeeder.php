@@ -14,6 +14,6 @@ class ProductoSeeder extends Seeder
     public function run(): void
     {
         // Utiliza el factory de Producto para generar 10000 instancias con datos falsos
-        Producto::factory()->count(1000)->create();
+        Producto::factory()->count(5)->create();
     }
 }
