@@ -13,7 +13,7 @@ class ProveedorPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class ProveedorPolicy
      */
     public function view(User $user, Proveedor $proveedor): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class ProveedorPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -37,7 +37,7 @@ class ProveedorPolicy
      */
     public function update(User $user, Proveedor $proveedor): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -45,7 +45,7 @@ class ProveedorPolicy
      */
     public function delete(User $user, Proveedor $proveedor): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class ProveedorPolicy
      */
     public function restore(User $user, Proveedor $proveedor): bool
     {
-        //
+        return false;
     }
 
     /**
@@ -61,6 +61,6 @@ class ProveedorPolicy
      */
     public function forceDelete(User $user, Proveedor $proveedor): bool
     {
-        //
+        return false;
     }
 }

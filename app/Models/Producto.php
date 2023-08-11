@@ -9,5 +9,7 @@ class Producto extends Model
 {
     use HasFactory;
     use Searchable;
+
+    protected $fillable = ['id', 'nombre', 'folio', 'cantidad', 'unidad', 'precio_por_unidad', 'fecha_ingreso', 'id_proveedor'];
     protected $searchableFields = ['*'];
 }

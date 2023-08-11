@@ -43,6 +43,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/proveedores', [ProveedorController::class, 'index'])->name('proveedor.index');
     Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
+    Route::get('/agregar-producto', [ProductoController::class, 'create'])->name('productos.create');
+    Route::post('/agregar-producto', [ProductoController::class, 'store'])->name('productos.store');
 });
 
 require __DIR__.'/auth.php';

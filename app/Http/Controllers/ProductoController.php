@@ -32,15 +32,20 @@ class ProductoController extends Controller
      */
     public function create()
     {
-        //
+        return view('app.productos.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProductoRequest $request)
+    public function store(StoreProductoRequest $request): RedirectResponse
     {
-        //
+        $this->authorize('create', Producto::class);
+
+        $validated = $request->validated();
+        $producto = Producto::create($validated);
+
+        return back()->withInput()->withSuccess(__('Producto Añadido con Éxito'));
     }
 
     /**
