@@ -6,8 +6,8 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-7 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="max-w-7xl mx-auto">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg" style="width: 110%; margin-left: -45px">
                 <div class="container mx-auto mt-6">
                     <header class="mleft mb-4">
                         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -29,17 +29,23 @@
                             <div class="mt-6 mleft mright">
                                 <x-primary-button style="height: 42px">{{ __('Buscar') }}</x-primary-button>
                             </div>
+                            <div class="mt-6 mright">
+                                <x-nav-link-button href="{{ route('productos.index') }}" class="btn btn-light" style="height: 42px">
+                                    Limpiar Búsqueda
+                                </x-nav-link-button>
+                            </div>
                             
                             <div class="mt-6">
-                                <a href="{{ route('productos.create') }}" style="height: 42px; margin-left: 260px;" class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                    {{ __('Agregar Producto') }}
-                                </a>
+                                <x-nav-link-button href="{{ route('productos.create') }}" class="btn btn-light" style="height: 42px; margin-left: 260px;">
+                                        <i class="icon ion-md-return-left text-primary"></i>
+                                        @lang('Agregar Producto')
+                                </x-nav-link-button>
                             </div>
                         </div>
                     </form>
                 </div>              
 
-                <div class="w-96 pt-2"> 
+                <div class="pt-2"> 
                     <table class="table-auto table-borderless table-hover" aria-label="Catálogo de Productos">
                         <thead>
                             <tr>
@@ -66,6 +72,9 @@
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Región
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Acciones
                                 </th>
                             </tr>
                         </thead>
@@ -97,6 +106,21 @@
                                 <td class="px-6 py-4 text-white whitespace-nowrap">
                                     @php $region = \App\Models\Region::where(['id' => $proveedor->id_region])->first(); @endphp
                                     {{ $region->region}}
+                                </td>
+                                <td class="px-6 py-4 text-white whitespace-nowrap">
+                                    <div role="group" aria-label="Row Actions" class="flex gap-4">
+                                        <x-nav-link-button href="/editar-producto/{{ $producto->id }}" class="btn btn-light">
+                                            Editar
+                                        </x-nav-link-button>
+                                        <form action="{{ route('productos.destroy', $producto) }}" method="POST"
+                                            onsubmit="return confirm('{{ __('¿Estás seguro de que desea eliminar el producto?') }}')">
+                                            @csrf
+                                            <input type="hidden" name="id" value="{{ $producto->id }}">
+                                            <x-danger-button class="ml-3">
+                                                {{ __('Eliminar') }}
+                                            </x-danger-button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             @empty

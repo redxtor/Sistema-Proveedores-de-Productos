@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
+use App\Models\Region;
+use App\Models\Proveedor;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,20 +34,25 @@ class ProductoController extends Controller
      */
     public function create()
     {
-        return view('app.productos.create');
+        $regions = Region::pluck('region', 'id');
+        $proveedors = Proveedor::pluck('nombre', 'id');
+
+        return view('app.productos.create', compact('regions', 'proveedors'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProductoRequest $request): RedirectResponse
+    public function store(StoreProductoRequest $request)
     {
         $this->authorize('create', Producto::class);
 
         $validated = $request->validated();
-        $producto = Producto::create($validated);
+        Producto::create($validated);
 
-        return back()->withInput()->withSuccess(__('Producto Añadido con Éxito'));
+        return redirect()->action(
+            [ProductoController::class, 'index']
+        );
     }
 
     /**
@@ -53,30 +60,45 @@ class ProductoController extends Controller
      */
     public function show(Producto $producto)
     {
-        //
+        
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Producto $producto)
+    public function edit($id, Producto $producto)
     {
-        //
+        $product = DB::select('select * from productos where id = ?', [$id]);
+        return view('app.productos.edit', compact('product', 'producto'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductoRequest $request, Producto $producto)
+    public function update(Request $req, UpdateProductoRequest $request, Producto $producto)
     {
-        //
+        $this->authorize('update', $producto);
+        $validated = $request->validated();
+
+        $prod = Producto::find($req->id);
+        $prod->update($validated);
+
+        return redirect()->action(
+            [ProductoController::class, 'index']
+        );
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Producto $producto)
+    public function destroy(Request $request, Producto $producto)
     {
-        //
+        $this->authorize('delete', $producto);
+        $prod = Producto::find($request->id);
+        $prod->delete();
+
+        return redirect()->action(
+            [ProductoController::class, 'index']
+        );
     }
 }
